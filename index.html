@@ -332,32 +332,98 @@ section { position: relative; z-index: 1; }
 .project-item:last-child { border-bottom: 1px solid rgba(255,255,255,0.07); }
 .project-item.reverse { direction: rtl; }
 .project-item.reverse > * { direction: ltr; }
+
+/* 3D IMAGE SHOWCASE */
 .project-images {
   position: relative; padding: 0 48px 0 0;
-  display: flex; flex-direction: column; gap: 12px;
+  display: flex; flex-direction: column; gap: 20px;
+  perspective: 1200px;
 }
 .project-item.reverse .project-images { padding: 0 0 0 48px; }
+
+.project-img-3d {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  border-radius: 4px;
+}
+.project-img-3d:hover {
+  transform: rotateY(-6deg) rotateX(3deg) translateZ(20px) scale(1.02);
+}
+.project-item.reverse .project-img-3d:hover {
+  transform: rotateY(6deg) rotateX(3deg) translateZ(20px) scale(1.02);
+}
+
 .project-img-frame {
   position: relative; overflow: hidden;
   background: var(--surface);
-  border: 1px solid rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 4px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(0,255,224,0.05);
+  transition: box-shadow 0.6s ease, border-color 0.4s;
 }
+.project-img-3d:hover .project-img-frame {
+  box-shadow: 0 40px 80px rgba(0,0,0,0.8), 0 0 30px rgba(0,255,224,0.08), 0 0 0 1px rgba(0,255,224,0.15);
+  border-color: rgba(0,255,224,0.2);
+}
+
+/* Top label bar */
 .project-img-frame::before {
   content: attr(data-label);
-  position: absolute; top: 12px; left: 12px; z-index: 2;
+  position: absolute; top: 0; left: 0; right: 0; z-index: 3;
   font-family: 'Space Mono', monospace; font-size: 9px;
-  letter-spacing: 2px; color: var(--accent);
-  background: rgba(5,8,16,0.9); padding: 4px 10px;
+  letter-spacing: 3px; color: var(--accent);
+  background: rgba(5,8,16,0.85);
+  backdrop-filter: blur(8px);
+  padding: 8px 14px;
   text-transform: uppercase;
+  border-bottom: 1px solid rgba(0,255,224,0.1);
+  display: flex; align-items: center; gap: 8px;
 }
+.project-img-frame::after {
+  content: '● ● ●';
+  position: absolute; top: 6px; right: 14px; z-index: 4;
+  font-size: 7px; letter-spacing: 3px;
+  color: rgba(255,255,255,0.2);
+}
+
+/* Full image — no crop, full height */
 .project-img-frame img {
-  width: 100%; height: 180px; object-fit: cover; object-position: top;
-  display: block; transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
-  filter: saturate(0.8) brightness(0.85);
+  width: 100%;
+  height: auto;
+  min-height: 200px;
+  max-height: 340px;
+  object-fit: contain;
+  object-position: top center;
+  display: block;
+  margin-top: 28px; /* space for label bar */
+  transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1), filter 0.4s;
+  filter: saturate(0.85) brightness(0.9);
+  background: #080d1c;
 }
-.project-item:hover .project-img-frame img {
-  transform: scale(1.06); filter: saturate(1) brightness(1);
+.project-img-3d:hover .project-img-frame img {
+  transform: scale(1.03);
+  filter: saturate(1.1) brightness(1);
 }
+
+/* Shine overlay on hover */
+.project-img-frame .shine {
+  position: absolute; inset: 0; z-index: 2;
+  background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, transparent 50%);
+  opacity: 0; transition: opacity 0.4s;
+  pointer-events: none;
+}
+.project-img-3d:hover .project-img-frame .shine { opacity: 1; }
+
+/* 3D side edge effect */
+.project-img-3d::after {
+  content: '';
+  position: absolute; top: 4%; bottom: 4%; right: -8px; width: 8px;
+  background: linear-gradient(90deg, rgba(0,255,224,0.1), transparent);
+  transform: rotateY(90deg) translateZ(-4px);
+  border-radius: 0 2px 2px 0;
+}
+
 .project-info { padding: 0 0 0 16px; display: flex; flex-direction: column; justify-content: center; }
 .project-item.reverse .project-info { padding: 0 16px 0 0; }
 .project-num {
@@ -753,12 +819,21 @@ body::after {
     <!-- Project 1 -->
     <div class="project-item" id="proj1">
       <div class="project-images">
-        <div class="project-img-frame" data-label="Dashboard">
-          <img src="Screenshot%202026-06-06%20013519.png" alt="Quant Terminal Dashboard" onerror="this.parentElement.style.height='180px'; this.style.display='none'; this.parentElement.style.background='linear-gradient(135deg,#0a0f1e,#0d1530)'; this.parentElement.insertAdjacentHTML('beforeend','<div style=\'display:flex;align-items:center;justify-content:center;height:180px;font-family:Space Mono,monospace;font-size:11px;color:#5a6080;letter-spacing:2px;\'>DASHBOARD VIEW</div>')">
+        <div class="project-img-3d">
+          <div class="project-img-frame" data-label="Dashboard View">
+            <div class="shine"></div>
+            <img src="Screenshot%202026-06-06%20013432.png" alt="Quant Terminal Dashboard"
+              onerror="this.style.display='none'; this.parentElement.insertAdjacentHTML('afterbegin','<div style=\'display:flex;align-items:center;justify-content:center;min-height:200px;font-family:Space Mono,monospace;font-size:11px;color:#5a6080;letter-spacing:2px;margin-top:28px;\'>DASHBOARD VIEW</div>')">
+          </div>
         </div>
-        <div class="project-img-frame" data-label="Market">
-          <img src="Screenshot%202026-06-06%20013519_2.png" alt="Market View" onerror="this.parentElement.style.height='180px'; this.style.display='none'; this.parentElement.insertAdjacentHTML('beforeend','<div style=\'display:flex;align-items:center;justify-content:center;height:180px;font-family:Space Mono,monospace;font-size:11px;color:#5a6080;letter-spacing:2px;\'>MARKET VIEW</div>')">
+        <div class="project-img-3d">
+          <div class="project-img-frame" data-label="Trading Engine">
+            <div class="shine"></div>
+            <img src="Screenshot%202026-06-06%20013519.png" alt="Quant Terminal Market"
+              onerror="this.style.display='none'; this.parentElement.insertAdjacentHTML('afterbegin','<div style=\'display:flex;align-items:center;justify-content:center;min-height:200px;font-family:Space Mono,monospace;font-size:11px;color:#5a6080;letter-spacing:2px;margin-top:28px;\'>TRADING ENGINE</div>')">
+          </div>
         </div>
+
       </div>
       <div class="project-info">
         <div class="project-num">01</div>
@@ -782,11 +857,19 @@ body::after {
     <!-- Project 2 -->
     <div class="project-item reverse" id="proj2">
       <div class="project-images">
-        <div class="project-img-frame" data-label="Platform">
-          <img src="Screenshot%202026-06-06%20020143.png" alt="ContestHive" onerror="this.parentElement.style.height='180px'; this.style.display='none'; this.parentElement.insertAdjacentHTML('beforeend','<div style=\'display:flex;align-items:center;justify-content:center;height:180px;font-family:Space Mono,monospace;font-size:11px;color:#5a6080;letter-spacing:2px;\'>PLATFORM VIEW</div>')">
+        <div class="project-img-3d">
+          <div class="project-img-frame" data-label="Platform Home">
+            <div class="shine"></div>
+            <img src="Screenshot%202026-06-06%20020143.png" alt="ContestHive Platform"
+              onerror="this.style.display='none'; this.parentElement.insertAdjacentHTML('afterbegin','<div style=\'display:flex;align-items:center;justify-content:center;min-height:200px;font-family:Space Mono,monospace;font-size:11px;color:#5a6080;letter-spacing:2px;margin-top:28px;\'>PLATFORM HOME</div>')">
+          </div>
         </div>
-        <div class="project-img-frame" data-label="Contests">
-          <img src="Screenshot%202026-06-06%20020202.png" alt="Live Contests" onerror="this.parentElement.style.height='180px'; this.style.display='none'; this.parentElement.insertAdjacentHTML('beforeend','<div style=\'display:flex;align-items:center;justify-content:center;height:180px;font-family:Space Mono,monospace;font-size:11px;color:#5a6080;letter-spacing:2px;\'>CONTESTS VIEW</div>')">
+        <div class="project-img-3d">
+          <div class="project-img-frame" data-label="Live Contests">
+            <div class="shine"></div>
+            <img src="Screenshot%202026-06-06%20020202.png" alt="Live Contests"
+              onerror="this.style.display='none'; this.parentElement.insertAdjacentHTML('afterbegin','<div style=\'display:flex;align-items:center;justify-content:center;min-height:200px;font-family:Space Mono,monospace;font-size:11px;color:#5a6080;letter-spacing:2px;margin-top:28px;\'>LIVE CONTESTS</div>')">
+          </div>
         </div>
       </div>
       <div class="project-info">
